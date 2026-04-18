@@ -1,6 +1,10 @@
 using System.Text;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using FluentValidation;
+using ProjectPoc.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +15,15 @@ var jwtAudience = "ProjectPocUsers";
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Configure EF Core InMemory
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("ProjectPocDb"));
+
+// MediatR - register handlers from current assembly (MediatR v11)
+builder.Services.AddMediatR(typeof(Program).Assembly);
+
+// Register FluentValidation validators from assembly
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Configure authentication with JWT Bearer
 builder.Services.AddAuthentication(options =>
@@ -44,6 +57,14 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+// Seed some data
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.TodoItems.Add(new TodoItem { Title = "Initial item", IsCompleted = false });
+    db.SaveChanges();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

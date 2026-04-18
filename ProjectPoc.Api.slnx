@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="Project.POC.Common/Project.POC.Common.csproj" />
   <Project Path="ProjectPoc.Api/ProjectPoc.Api.csproj" />
 </Solution>
