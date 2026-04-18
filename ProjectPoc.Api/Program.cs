@@ -1,10 +1,11 @@
-using System.Text;
-using MediatR;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using FluentValidation;
 using ProjectPoc.Api.Data;
+using ProjectPoc.Api.Extensions;
+using ProjectPoc.Business;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("ProjectPocDb"));
 
 // MediatR - register handlers from current assembly (MediatR v11)
-builder.Services.AddMediatR(typeof(Program).Assembly);
+//builder.Services.AddMediatR(typeof(Program).Assembly);
+builder.Services.AddRequestHandlers();
 
 // Register FluentValidation validators from assembly
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
@@ -53,8 +55,10 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("HasDepartment", policy => policy.RequireClaim("department"));
 });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Swagger basic registration
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddOpenApi(); // Adds "v1" by default
 
 var app = builder.Build();
 
@@ -70,6 +74,11 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    // use intractive api open source Scalar.AspNetCore -> app.MapScalarApiReference();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "v1");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -77,6 +86,9 @@ app.UseHttpsRedirection();
 // Authentication must come before Authorization
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Correlation ID middleware to track requests across logs and services
+app.UseCorrelationMiddleware();
 
 app.MapControllers();
 

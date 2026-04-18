@@ -1,4 +1,7 @@
 <Solution>
   <Project Path="Project.POC.Common/Project.POC.Common.csproj" />
   <Project Path="ProjectPoc.Api/ProjectPoc.Api.csproj" />
+  <Project Path="ProjectPoc.Business/ProjectPoc.Business.csproj" Id="b6470c55-845b-49bd-af66-71616a47611a" />
+  <Project Path="ProjectPoc.Model/ProjectPoc.Model.csproj" Id="2697ad4a-6b87-434f-a37a-e7f9bff42751" />
+  <Project Path="ProjectPoc.Repository/ProjectPoc.Repository.csproj" Id="585246ae-eee3-4c86-b4cc-3696fb88b78c" />
 </Solution>

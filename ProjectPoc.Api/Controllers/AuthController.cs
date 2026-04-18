@@ -11,7 +11,7 @@ namespace ProjectPoc.Api.Controllers
     public class AuthController : ControllerBase
     {
         // NOTE: For demo only. Move secrets to secure configuration in production.
-        private const string JwtKey = "super_secret_key_123!"; // same as in Program.cs
+        private const string JwtKey = "super_secret_key_do_not share_123!"; // same as in Program.cs
         private const string JwtIssuer = "ProjectPoc";
         private const string JwtAudience = "ProjectPocUsers";
 
